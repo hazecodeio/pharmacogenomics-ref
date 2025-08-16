@@ -1,5 +1,8 @@
+#!/bin/bash
+
 CWD=$(echo $(realpath "${0}") | xargs dirname)
 #echo "${CWD}"
+
 source "${CWD}"/_env-loader.sh
 
 # ToDo - move pattern matching to separate files `.gpgrule`
@@ -7,6 +10,7 @@ source "${CWD}"/_env-loader.sh
 #        `.gpgrule` in subdirectories override parent's
 
 find ../ -type f -regextype posix-extended \
-  -regex "^(../|./|/).*.gpg$" \
+  -iregex "^(../|./|/).*.gpg$" \
+  -not -iregex ".*etc.*" \
   | grep -o '.*[^.gpg]' \
   | xargs -i gpg -v --passphrase $GPG_PASSPHRASE --yes --batch -o {} -d {}.gpg
